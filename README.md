@@ -1,2 +1,1 @@
-# NeuralNetworkCpp
- 
+# NeuralNetworkC++
