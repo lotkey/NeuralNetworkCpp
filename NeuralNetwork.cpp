@@ -65,7 +65,8 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& features, cons
 				VectorMath::operator/=(predictionAverage, (double)batchSize);
 				VectorMath::operator/=(answerAverage, (double)batchSize);
 				// Propagate loss backwards
-				backPropagate(predictionAverage, answerAverage, learningRate);
+				backPropagate(predictionAverage, answerAverage);
+				updateWeights(learningRate);
 				// Reset the averages
 				predictionAverage = std::vector<double>(outputSize);
 				answerAverage = std::vector<double>(outputSize);
@@ -82,10 +83,20 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& features, cons
 }
 
 // Propagate the loss backwards and update the synapses accordingly
-void NeuralNetwork::backPropagate(const std::vector<double>& observed, const std::vector<double>& actual, const double& learningRate) {
-	std::vector<double> error = synapses.back().correctWeights(observed, actual, learningRate);
+void NeuralNetwork::backPropagate(const std::vector<double>& observed, const std::vector<double>& actual) {
+	/*std::vector<double> error = synapses.back().correctWeights(observed, actual, learningRate);
 	for (int i = (unsigned)synapses.size() - 2; i >= 0; i--) {
 		error = synapses[i].correctWeights(error, learningRate);
+	}*/
+	std::vector<double> error = synapses.back().propagateError(observed, actual);
+	for (int i = (int)synapses.size() - 2; i >= 0; i--) {
+		error = synapses[i].propagateError(error);
+	}
+}
+
+void NeuralNetwork::updateWeights(const double& learningRate) {
+	for (Synapse s : synapses) {
+		s.correctWeights(learningRate);
 	}
 }
 

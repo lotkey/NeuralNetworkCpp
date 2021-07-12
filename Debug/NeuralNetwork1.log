@@ -1,3 +1,7 @@
-﻿  driver.cpp
+﻿  DataReader.cpp
+  driver.cpp
 C:\Users\Chris\source\repos\NeuralNetwork1\NeuralNetwork1\driver.cpp(7,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+Debug\Activation.obj : warning LNK4042: object specified more than once; extras ignored
+Debug\Loss.obj : warning LNK4042: object specified more than once; extras ignored
   NeuralNetwork1.vcxproj -> C:\Users\Chris\source\repos\NeuralNetwork1\Debug\NeuralNetwork1.exe

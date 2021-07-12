@@ -16,7 +16,8 @@ private:
 	unsigned outputSize;
 
 	// Propagate backwards
-	void backPropagate(const std::vector<double>&, const std::vector<double>&, const double&);
+	void backPropagate(const std::vector<double>&, const std::vector<double>&);
+	void updateWeights(const double&);
 public:
 	// Constructor
 	NeuralNetwork(const std::vector<unsigned>&);

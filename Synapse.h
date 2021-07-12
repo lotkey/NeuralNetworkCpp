@@ -17,6 +17,7 @@ private:
 	unsigned startLayerSize;
 	// Ending layer size
 	unsigned endLayerSize;
+	std::vector<double> error;
 public:
 	// Constructor
 	Synapse(const unsigned&, const unsigned&);
@@ -30,9 +31,12 @@ public:
 	std::vector<double> getOutput(const std::vector<double>&);
 	// Get the activated output of the synapse from an input
 	std::vector<double> activate(const std::vector<double>&);
+	std::vector<double> propagateError(const std::vector<double>&, const std::vector<double>&);
+	std::vector<double> propagateError(const std::vector<double>&);
 	// Correct weights based on target and observed values
 	std::vector<double> correctWeights(const std::vector<double>&, const std::vector<double>&, const double&);
 	std::vector<double> correctWeights(const std::vector<double>&, const double&);
+	void correctWeights(const double&);
 };
 
 #endif

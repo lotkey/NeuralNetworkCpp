@@ -55,6 +55,26 @@ std::vector<double> Synapse::getOutput(const std::vector<double>& input) {
 	return output;
 }
 
+std::vector<double> Synapse::propagateError(const std::vector<double>& observed, const std::vector<double>& actual) {
+	assert(endLayerSize == observed.size() && endLayerSize == actual.size());
+	std::vector<double> nextError;
+	error.clear();
+	error = VectorMath::operator-(actual, observed);
+	// Take the derivative of the activation function on error
+	// Matrix multiple weights by error and store it in nextError
+	return nextError;
+}
+
+std::vector<double> Synapse::propagateError(const std::vector<double>& previousError) {
+	assert(endLayerSize == previousError.size());
+	std::vector<double> nextError;
+	error.clear();
+	error = previousError;
+	// Take the derivative of the activation function on error
+	// Matrix multiply the previous error by the weights
+	return nextError;
+}
+
 // Get activated output from input
 // Activated output can allow for nonlinear models
 std::vector<double> Synapse::activate(const std::vector<double>& input) {
@@ -62,7 +82,16 @@ std::vector<double> Synapse::activate(const std::vector<double>& input) {
 	return lastOutput;
 }
 
+void Synapse::correctWeights(const double& learningRate) {
+	for (unsigned i = 0; i < weights.size(); i++) {
+		for (unsigned j = 0; j < weights[i].size(); j++) {
+			weights[i][j] += learningRate * error[j] * lastInput[i];
+		}
+	}
+}
+
 // Correct the weights based on target and observed values
+// For the output layer
 std::vector<double> Synapse::correctWeights(const std::vector<double>& targets, const std::vector<double>& observed, const double& learningRate) {
 	std::vector<double> error;
 	std::vector<double> lossPrime = Loss::meanSquaredErrorPrime(targets, observed);
@@ -76,6 +105,7 @@ std::vector<double> Synapse::correctWeights(const std::vector<double>& targets, 
 	return error;
 }
 
+// Correct the weights based on error from the next (as in closer-to-output) layer
 std::vector<double> Synapse::correctWeights(const std::vector<double>& prevError, const double& learningRate) {
 	std::vector<double> error;
 	for (unsigned i = 0; i < weights.size(); i++) {
