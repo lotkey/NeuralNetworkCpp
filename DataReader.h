@@ -32,6 +32,7 @@ public:
 	void printFeatures() const;
 	// Read a file from a filename and separator
 	void read(const std::string&, const std::string&, const bool&, const bool&);
+	void readLabelInBack(const std::string&, const std::string&, const bool&, const bool&);
 	std::vector<std::vector<double>> featuresForOutput() { return featureOutput; }
 	// Shuffle all data
 	void shuffle();

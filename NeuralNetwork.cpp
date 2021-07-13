@@ -7,6 +7,7 @@
 #include "Loss.h"
 #include "NeuralNetwork.h"
 #include "Synapse.h"
+#include "VectorFunctions.h"
 #include "VectorMath.h"
 
 // Create a network from a topology of the layers
@@ -84,10 +85,6 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& features, cons
 
 // Propagate the loss backwards and update the synapses accordingly
 void NeuralNetwork::backPropagate(const std::vector<double>& observed, const std::vector<double>& actual) {
-	/*std::vector<double> error = synapses.back().correctWeights(observed, actual, learningRate);
-	for (int i = (unsigned)synapses.size() - 2; i >= 0; i--) {
-		error = synapses[i].correctWeights(error, learningRate);
-	}*/
 	std::vector<double> error = synapses.back().propagateError(observed, actual);
 	for (int i = (int)synapses.size() - 2; i >= 0; i--) {
 		error = synapses[i].propagateError(error);
@@ -95,8 +92,8 @@ void NeuralNetwork::backPropagate(const std::vector<double>& observed, const std
 }
 
 void NeuralNetwork::updateWeights(const double& learningRate) {
-	for (Synapse s : synapses) {
-		s.correctWeights(learningRate);
+	for (unsigned i = 0; i < synapses.size(); i++) {
+		synapses[i].correctWeights(learningRate);
 	}
 }
 

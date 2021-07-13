@@ -94,6 +94,54 @@ void DataReader::read(const std::string& filename, const std::string& separator,
 		features.push_back(std::vector<double>());
 		featureOutput.push_back(std::vector<double>());
 		while (line != "") {
+			std::string feature;
+			if (line.find(separator) == std::string::npos) {
+				feature = line;
+				line = "";
+			}
+			else feature = line.substr(0, line.find(separator));
+			if (!numericalFeatures && !VectorFunctions::contains(featureStrings, feature)) {
+				featureStrings.push_back(feature);
+			}
+			if (numericalFeatures) {
+				features.back().push_back(std::atof(feature.c_str()));
+				featureOutput.back().push_back(std::atof(feature.c_str()));
+			}
+			else {
+				features.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
+				featureOutput.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
+			}
+			line = line.substr(line.find(separator) + 1, line.length() - line.find(separator));
+		}
+	}
+	std::cout << "Finished reading in \"" << filename << "\".\n";
+	std::cout << "Number of features: " << features.size() << "\n";
+	std::cout << "Number of labels: " << labels.size() << "\n";
+	infile.close();
+}
+
+// Read in a file from a filename using a separator
+void DataReader::readLabelInBack(const std::string& filename, const std::string& separator, const bool& numericalFeatures, const bool& numericalLabels) {
+	std::ifstream infile;
+	std::string line;
+	std::cout << "Reading in data from \"" << filename << "\" separated by \"" << separator << "\"..." << std::endl;
+	infile.open(filename);
+
+	while (std::getline(infile, line)) {
+
+		int lastIndex = line.find_last_of(separator);
+		//std::string label = line.substr(0, line.find(separator));
+		std::string label = line.substr(lastIndex + 1, line.length() - (lastIndex + 1));
+		if (!numericalLabels && !VectorFunctions::contains(labelStrings, label)) {
+			labelStrings.push_back(label);
+		}
+		if (numericalLabels) labels.push_back(std::atof(label.c_str()));
+		else labels.push_back(VectorFunctions::indexOf(labelStrings, label));
+		line = line.substr(0, lastIndex);
+
+		features.push_back(std::vector<double>());
+		featureOutput.push_back(std::vector<double>());
+		while (line != "") {
 			std::string feature = line.substr(0, line.find(separator));
 			if (!numericalFeatures && !VectorFunctions::contains(featureStrings, feature)) {
 				featureStrings.push_back(feature);
@@ -106,8 +154,8 @@ void DataReader::read(const std::string& filename, const std::string& separator,
 				features.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
 				featureOutput.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
 			}
-			if (line.length() == 1) line = "";
 			line = line.substr(line.find(separator) + 1, line.length() - line.find(separator));
+			if (line == " " || line == separator) line = "";
 		}
 	}
 	std::cout << "Finished reading in \"" << filename << "\".\n";

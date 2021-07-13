@@ -19,7 +19,7 @@ std::vector<double> Loss::meanSquaredError(const std::vector<double>& target, co
 }
 
 double Loss::meanSquaredErrorPrime(const double& target, const double& output) {
-	return 2.0 * (output - target);
+	return 2.0 * (target - output);
 }
 
 std::vector<double> Loss::meanSquaredErrorPrime(const std::vector<double>& target, const std::vector<double>& observed) {

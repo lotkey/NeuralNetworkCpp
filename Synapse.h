@@ -33,9 +33,6 @@ public:
 	std::vector<double> activate(const std::vector<double>&);
 	std::vector<double> propagateError(const std::vector<double>&, const std::vector<double>&);
 	std::vector<double> propagateError(const std::vector<double>&);
-	// Correct weights based on target and observed values
-	std::vector<double> correctWeights(const std::vector<double>&, const std::vector<double>&, const double&);
-	std::vector<double> correctWeights(const std::vector<double>&, const double&);
 	void correctWeights(const double&);
 };
 

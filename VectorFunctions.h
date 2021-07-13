@@ -1,6 +1,7 @@
 #ifndef VECTORFUNCTIONS_H
 #define VECTORFUNCTIONS_H
 
+#include <iostream>
 #include <vector>
 
 namespace VectorFunctions {
@@ -14,6 +15,9 @@ namespace VectorFunctions {
 	// Returns a vector of vectors, each with one item in it
 	template <typename T>
 	std::vector<std::vector<T>> matrixify(const std::vector<T>&);
+
+	template <typename T>
+	void print(const std::vector<T>&);
 }
 
 // Returns the index of an element in a vector, or -1 if not found
@@ -44,6 +48,14 @@ std::vector<std::vector<T>> VectorFunctions::matrixify(const std::vector<T>& v) 
 		result.back().push_back(t);
 	}
 	return result;
+}
+
+template <typename T>
+void VectorFunctions::print(const std::vector<T>& v) {
+	for (T t : v) {
+		std::cout << t << " ";
+	}
+	std::cout << "\n";
 }
 
 #endif

@@ -65,9 +65,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dataset.data" />
+    <None Include="seeds_dataset.csv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="guitar_di.txt" />
     <Text Include="guitar_processed.txt" />
+    <Text Include="data.txt" />
   </ItemGroup>
 </Project>

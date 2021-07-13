@@ -5,7 +5,7 @@
 #pragma region Sigmoid function and derivatives
 
 double Activation::sigmoid(const double& d) {
-	return 1.0 / (1.0 + exp(d));
+	return 1.0 / (1.0 + exp(-d));
 }
 
 std::vector<double> Activation::sigmoid(const std::vector<double>& v) {
