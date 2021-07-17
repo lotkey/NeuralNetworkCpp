@@ -36,3 +36,39 @@ std::vector<double> Loss::meanSquaredErrorPrime(const std::vector<double>& targe
 }
 
 #pragma endregion
+
+double Loss::f(const double& target, const double& output, const Function& func) {
+	switch (func) {
+	case(Function::MEANSQUAREDERROR):
+		return meanSquaredError(target, output);
+	default:
+		return meanSquaredError(target, output);
+	}
+}
+
+std::vector<double> Loss::f(const std::vector<double>& target, const std::vector<double>& output, const Function& func) {
+	switch (func) {
+	case(Function::MEANSQUAREDERROR):
+		return meanSquaredError(target, output);
+	default:
+		return meanSquaredError(target, output);
+	}
+}
+
+double Loss::fPrime(const double& target, const double& output, const Function& func) {
+	switch (func) {
+	case(Function::MEANSQUAREDERROR):
+		return meanSquaredErrorPrime(target, output);
+	default:
+		return meanSquaredErrorPrime(target, output);
+	}
+}
+
+std::vector<double> Loss::fPrime(const std::vector<double>& target, const std::vector<double>& output, const Function& func) {
+	switch (func) {
+	case(Function::MEANSQUAREDERROR):
+		return meanSquaredErrorPrime(target, output);
+	default:
+		return meanSquaredErrorPrime(target, output);
+	}
+}

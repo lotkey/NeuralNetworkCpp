@@ -1,7 +1,12 @@
+#include <fstream>
+#include <future>
 #include <iostream>
 #include <vector>
+#include "Activation.h"
 #include "DataReader.h"
+#include "Loss.h"
 #include "NeuralNetwork.h"
+#include "VectorFunctions.h"
 
 int main() {
     srand(time(NULL));
@@ -11,8 +16,7 @@ int main() {
     DataTuple testingData = dr.spliceBack(0.2, true, true);
     DataTuple trainingData = dr.spliceFront(0.8, true, true);
 
-    std::vector<unsigned> topology{ testingData.inputSize(), 32, 16, testingData.outputSize() };
-    NeuralNetwork net = NeuralNetwork(topology);
+    NeuralNetwork net = NeuralNetwork(Activation::Function::SIGMOID, Loss::Function::MEANSQUAREDERROR, 3, testingData.inputSize(), 16, testingData.outputSize());
     std::cout << "Test loss: " << net.testDiscrete(testingData.getFeatures(), testingData.getLabels()) * 100 << "%\n";
     net.train(trainingData.getFeatures(), trainingData.getLabels(), 0.1, 500, 10);
     std::cout << "Test loss: " << net.testDiscrete(testingData.getFeatures(), testingData.getLabels()) * 100 << "%\n";

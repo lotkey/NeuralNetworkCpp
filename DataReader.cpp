@@ -7,8 +7,14 @@
 #include "DataReader.h"
 #include "VectorFunctions.h"
 
-// Convert a vector of doubles (integers, really) to a vector of one-hot vectors
-std::vector<std::vector<double>> DataReader::calculateOneHot(const std::vector<double>& values, const std::vector<std::string>& strings) {
+
+/* Static method
+Takes a vector of doubles (treated as ints) and a list of strings
+Returns a list of vectors
+Input: values = { 0, 2, 1 }, strings = { "y", "n", "?" }
+Output: { { 1, 0, 0 }, { 0, 0, 1 }, { 0, 1, 0 } }
+*/
+std::vector<std::vector<double>> DataReader::oneHot(const std::vector<double>& values, const std::vector<std::string>& strings) {
 	std::vector<std::vector<double>> oneHot;
 	for (unsigned i = 0; i < values.size(); i++) {
 		oneHot.push_back(std::vector<double>());
@@ -20,12 +26,13 @@ std::vector<std::vector<double>> DataReader::calculateOneHot(const std::vector<d
 	return oneHot;
 }
 
-// Static class function
-// Takes a list of vectors of doubles (should be integers, though) and a list of strings
-// Returns a list of vectors
-// Input: values = { { 0, 2, 1 }, { 0, 0, 1 } }, strings = { 'y', 'n', '?' }
-// Output: { { 1, 0, 0,  0, 0, 1,  0, 1, 0 }, { 1, 0, 0,  1, 0, 0,  0, 1, 0 } }
-std::vector<std::vector<double>> DataReader::calculateOneHot(const std::vector<std::vector<double>>& values, const std::vector<std::string>& strings) {
+/* Static method
+Takes a list of vectors of doubles (should be integers, though) and a list of strings
+Returns a list of vectors
+Input: values = { { 0, 2, 1 }, { 0, 0, 1 } }, strings = { "y", "n", "?" }
+Output: { { 1, 0, 0,  0, 0, 1,  0, 1, 0 }, { 1, 0, 0,  1, 0, 0,  0, 1, 0 } }
+*/
+std::vector<std::vector<double>> DataReader::oneHot(const std::vector<std::vector<double>>& values, const std::vector<std::string>& strings) {
 	std::vector<std::vector<double>> oneHot;
 	for (unsigned i = 0; i < values.size(); i++) {
 		oneHot.push_back(std::vector<double>());
@@ -48,10 +55,8 @@ DataReader::DataReader() {
 // Print all data using the feature/label string vectors
 void DataReader::print() const {
 	for (unsigned i = 0; i < features.size(); i++) {
-		//std::cout << labelStrings[(int)labels[i]] << "\t";
 		std::cout << "[ " << labels[i] << " ]" << "\t";
 		for (unsigned j = 0; j < features[i].size(); j++) {
-			//std::cout << featureStrings[(int)features[i][j]] << " ";
 			std::cout << features[i][j] << " ";
 		}
 		std::cout << std::endl;
@@ -200,9 +205,9 @@ DataTuple DataReader::spliceFront(const double& portion, const bool& oneHotFeatu
 	std::vector<double> labelSplice = std::vector<double>(labels.begin(), labels.end() - end);
 
 	DataTuple data = DataTuple();
-	if (oneHotFeatures) data.setFeatures(calculateOneHot(featureSplice, featureStrings));
+	if (oneHotFeatures) data.setFeatures(oneHot(featureSplice, featureStrings));
 	else data.setFeatures(featureSplice);
-	if (oneHotLabels) data.setLabels(calculateOneHot(labelSplice, labelStrings));
+	if (oneHotLabels) data.setLabels(oneHot(labelSplice, labelStrings));
 	else data.setLabels(VectorFunctions::matrixify(labelSplice));
 	std::cout << "Finished splicing.\n";
 	return data;
@@ -217,9 +222,9 @@ DataTuple DataReader::spliceBack(const double& portion, const bool& oneHotFeatur
 	std::vector<double> labelSplice = std::vector<double>(labels.begin() + start, labels.end());
 
 	DataTuple data = DataTuple();
-	if (oneHotFeatures) data.setFeatures(calculateOneHot(featureSplice, featureStrings));
+	if (oneHotFeatures) data.setFeatures(oneHot(featureSplice, featureStrings));
 	else data.setFeatures(featureSplice);
-	if (oneHotLabels) data.setLabels(calculateOneHot(labelSplice, labelStrings));
+	if (oneHotLabels) data.setLabels(oneHot(labelSplice, labelStrings));
 	else data.setLabels(VectorFunctions::matrixify(labelSplice));
 	std::cout << "Finished splicing.\n";
 	return data;

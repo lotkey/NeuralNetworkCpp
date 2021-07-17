@@ -10,13 +10,14 @@ features = list()
 labels = list()
 output = list()
 string: str = ""
+strings = list()
 
 features = featureFile.readlines()
 labels = labelFile.readlines()
 featureFile.close()
 labelFile.close()
 
-for i in range(numFeatures, 1000):
+for i in range(numFeatures, len(features)):
     string += labels[i - numFeatures].rstrip() + ","
     for j in range(0, numFeatures):
         string += features[i - (numFeatures - j)].rstrip() + ","

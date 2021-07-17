@@ -17,7 +17,8 @@ std::vector<double> Activation::sigmoid(const std::vector<double>& v) {
 }
 
 double Activation::sigmoidPrime(const double& d) {
-	return sigmoid(d) * (1.0 - sigmoid(d));
+	return d * (1.0 - d);
+	//return sigmoid(d) * (1.0 - sigmoid(d));
 }
 
 std::vector<double> Activation::sigmoidPrime(const std::vector<double>& v) {
@@ -45,7 +46,7 @@ std::vector<double> Activation::wideSigmoid(const std::vector<double>& v) {
 }
 
 double Activation::wideSigmoidPrime(const double& d) {
-	return sigmoidPrime(d);
+	return 2.0 * sigmoidPrime(d);
 }
 
 std::vector<double> Activation::wideSigmoidPrime(const std::vector<double>& v) {
@@ -54,30 +55,46 @@ std::vector<double> Activation::wideSigmoidPrime(const std::vector<double>& v) {
 
 #pragma endregion
 
-#pragma region Fast sigmoid approximation and derivatives
-
-double Activation::fastSigmoid(const double& d) {
-	return d / (1 + abs(d));
-}
-
-std::vector<double> Activation::fastSigmoid(const std::vector<double>& v) {
-	std::vector<double> output = std::vector<double>();
-	for (double d : v) {
-		output.push_back(fastSigmoid(d));
+double Activation::f(const double& d, const Function& func) {
+	switch (func) {
+	case Function::SIGMOID:
+		return sigmoid(d);
+	case Function::WIDESIGMOID:
+		return wideSigmoid(d);
+	default:
+		return sigmoid(d);
 	}
-	return output;
 }
 
-double Activation::fastSigmoidPrime(const double& d) {
-	return (1.0 / ((abs(d) + 1.0) * (abs(d) + 1.0)));
-}
-
-std::vector<double> Activation::fastSigmoidPrime(const std::vector<double>& v) {
-	std::vector<double> output = std::vector<double>();
-	for (double d : v) {
-		output.push_back(fastSigmoidPrime(d));
+std::vector<double> Activation::f(const std::vector<double>& v, const Function& func) {
+	switch (func) {
+	case Function::SIGMOID:
+		return sigmoid(v);
+	case Function::WIDESIGMOID:
+		return wideSigmoid(v);
+	default:
+		return sigmoid(v);
 	}
-	return output;
 }
 
-#pragma endregion
+double Activation::fPrime(const double& d, const Function& func) {
+	switch (func) {
+	case Function::SIGMOID:
+		return sigmoidPrime(d);
+	case Function::WIDESIGMOID:
+		return wideSigmoidPrime(d);
+	default:
+		return sigmoidPrime(d);
+	}
+}
+
+std::vector<double> Activation::fPrime(const std::vector<double>& v, const Function& func) {
+	switch (func) {
+	case Function::SIGMOID:
+		return sigmoidPrime(v);
+	case Function::WIDESIGMOID:
+		return wideSigmoidPrime(v);
+	default:
+		return sigmoidPrime(v);
+	}
+}

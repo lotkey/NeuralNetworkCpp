@@ -19,8 +19,8 @@ private:
 	std::vector<double> labels;
 	std::vector<std::vector<double>> featureOutput;
 
-	static std::vector<std::vector<double>> calculateOneHot(const std::vector<double>&, const std::vector<std::string>&);
-	static std::vector<std::vector<double>> calculateOneHot(const std::vector<std::vector<double>>&, const std::vector<std::string>&);
+	static std::vector<std::vector<double>> oneHot(const std::vector<double>&, const std::vector<std::string>&);
+	static std::vector<std::vector<double>> oneHot(const std::vector<std::vector<double>>&, const std::vector<std::string>&);
 public:
 	// Constructor
 	DataReader();

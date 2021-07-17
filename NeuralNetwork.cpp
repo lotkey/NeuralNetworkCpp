@@ -1,9 +1,12 @@
 #include <cassert>
+#include <cstdarg>
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <string>
 #include <tuple>
 #include <vector>
+#include "Activation.h"
 #include "Loss.h"
 #include "NeuralNetwork.h"
 #include "Synapse.h"
@@ -12,10 +15,108 @@
 
 // Create a network from a topology of the layers
 NeuralNetwork::NeuralNetwork(const std::vector<unsigned>& topology) {
-	inputSize = topology[0];
+	this->topology = topology;
+	inputSize = topology.front();
 	outputSize = topology.back();
 	for (unsigned i = 0; i < topology.size() - 1; i++) {
 		synapses.push_back(Synapse(topology[i], topology[i + 1]));
+	}
+	activationFunction = Activation::Function::SIGMOID;
+	lossFunction = Loss::Function::MEANSQUAREDERROR;
+}
+
+NeuralNetwork::NeuralNetwork(unsigned numLayers, ...) {
+	va_list ap;
+	va_start(ap, numLayers);
+	for (unsigned j = 0; j < numLayers; j++) {
+		topology.push_back(va_arg(ap, unsigned));
+	}
+	va_end(ap);
+
+	inputSize = topology.front();
+	outputSize = topology.back();
+	for (unsigned i = 0; i < topology.size() - 1; i++) {
+		synapses.push_back(Synapse(topology[i], topology[i + 1]));
+	}
+	activationFunction = Activation::Function::SIGMOID;
+	lossFunction = Loss::Function::MEANSQUAREDERROR;
+}
+
+NeuralNetwork::NeuralNetwork(const Activation::Function& a, const Loss::Function& l, const std::vector<unsigned>& topology) {
+	this->topology = topology;
+	inputSize = topology.front();
+	outputSize = topology.back();
+	for (unsigned i = 0; i < topology.size() - 1; i++) {
+		synapses.push_back(Synapse(topology[i], topology[i + 1]));
+	}
+	activationFunction = a;
+	lossFunction = l;
+}
+
+NeuralNetwork::NeuralNetwork(const Activation::Function& a, const Loss::Function& l, unsigned numLayers, ...) {
+	va_list ap;
+	va_start(ap, numLayers);
+	for (unsigned j = 0; j < numLayers; j++) {
+		topology.push_back(va_arg(ap, unsigned));
+	}
+	va_end(ap);
+
+	inputSize = topology.front();
+	outputSize = topology.back();
+	for (unsigned i = 0; i < topology.size() - 1; i++) {
+		synapses.push_back(Synapse(topology[i], topology[i + 1]));
+	}
+	activationFunction = a;
+	lossFunction = l;
+}
+
+NeuralNetwork::NeuralNetwork(const std::string& filename) {
+	std::vector<unsigned> topo;
+	std::vector<std::vector<std::vector<double>>> w;
+
+	std::ifstream infile;
+	std::string line = "";
+	infile.open(filename);
+
+	int a, l;
+	infile >> a;
+	infile >> l;
+	activationFunction = static_cast<Activation::Function>(a);
+	lossFunction = static_cast<Loss::Function>(l);
+
+	while (line.empty()) std::getline(infile, line);
+	while (!line.empty()) {
+		unsigned i;
+		unsigned index;
+		if (line.find_first_of(" ") != std::string::npos) {
+			index = line.find_first_of(" ");
+			i = std::stoi(line.substr(0, index));
+			line = line.substr(index + 1, line.length() - index - 1);
+		}
+		else {
+			i = std::stoi(line);
+			line = "";
+		}
+		topo.push_back(i);
+	}
+
+	for (unsigned i = 0; i < topo.size() - 1; i++) {
+		w.push_back(std::vector<std::vector<double>>());
+		for (unsigned j = 0; j < topo[i] + 1; j++) {
+			w[i].push_back(std::vector<double>());
+			for (unsigned k = 0; k < topo[i + 1]; k++) {
+				double d;
+				infile >> d;
+				w[i][j].push_back(d);
+			}
+		}
+	}
+
+	topology = topo;
+	inputSize = topology.front();
+	outputSize = topology.back();
+	for (std::vector<std::vector<double>> v : w) {
+		synapses.push_back(Synapse(v));
 	}
 }
 
@@ -67,31 +168,39 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& features, cons
 				VectorMath::operator/=(answerAverage, (double)batchSize);
 				// Propagate loss backwards
 				backPropagate(predictionAverage, answerAverage);
-				updateWeights(learningRate);
+				correctWeights(learningRate);
 				// Reset the averages
 				predictionAverage = std::vector<double>(outputSize);
 				answerAverage = std::vector<double>(outputSize);
 			}
 		}
 		// Update progress bar
-		if ((int)(e * barSize / epochs) > barCounter) {
+		while ((int)(e * barSize / epochs) > barCounter) {
 			std::cout << (char)(219);
 			barCounter++;
 		}
 	}
+
+	// Finish progress bar
+	while (barCounter < barSize) {
+		std::cout << (char)219;
+		barCounter++;
+	}
+
 	// Print status
-	std::cout << (char)(219) << "\n\nFinished training.\n";
+	std::cout << "\n\nFinished training.\n";
 }
 
-// Propagate the loss backwards and update the synapses accordingly
+// Propagate the loss backwards
 void NeuralNetwork::backPropagate(const std::vector<double>& observed, const std::vector<double>& actual) {
-	std::vector<double> error = synapses.back().propagateError(observed, actual);
+	std::vector<double> error = synapses.back().propagateError(observed, actual, activationFunction, lossFunction);
 	for (int i = (int)synapses.size() - 2; i >= 0; i--) {
-		error = synapses[i].propagateError(error);
+		error = synapses[i].propagateError(error, activationFunction);
 	}
 }
 
-void NeuralNetwork::updateWeights(const double& learningRate) {
+// Correct the weights in each synapse
+void NeuralNetwork::correctWeights(const double& learningRate) {
 	for (unsigned i = 0; i < synapses.size(); i++) {
 		synapses[i].correctWeights(learningRate);
 	}
@@ -102,7 +211,7 @@ double NeuralNetwork::test(const std::vector<std::vector<double>>& features, con
 	assert(features.size() == labels.size());
 	double loss = 0.0;
 	for (unsigned i = 0; i < features.size(); i++) {
-		std::vector<double> lossVector = Loss::meanSquaredError(predict(features[i]), labels[i]);
+		std::vector<double> lossVector = Loss::f(predict(features[i]), labels[i], lossFunction);
 		for (double d : lossVector) {
 			loss += d;
 		}
@@ -125,16 +234,17 @@ double NeuralNetwork::testDiscrete(const std::vector<std::vector<double>>& featu
 	return (double)correct / (double)features.size();
 }
 
-// Make a prediction based on input
+// Make a prediction with provided input
 std::vector<double> NeuralNetwork::predict(const std::vector<double>& input) {
 	assert(input.size() == inputSize);
 	std::vector<double> output = input;
 	for (unsigned i = 0; i < synapses.size(); i++) {
-		output = synapses[i].activate(output);
+		output = synapses[i].activate(output, activationFunction);
 	}
 	return output;
 }
 
+// Take in features and export predictions to an output file
 void NeuralNetwork::exportOutput(const std::vector<std::vector<double>>& features, const std::string& filename) {
 	std::ofstream outfile;
 	outfile.open(filename);
@@ -147,4 +257,31 @@ void NeuralNetwork::exportOutput(const std::vector<std::vector<double>>& feature
 		outfile << "\n";
 	}
 	outfile.close();
+}
+
+void NeuralNetwork::save(const std::string& filename) const {
+	std::ofstream outfile;
+	outfile.open(filename);
+
+	outfile << (int)activationFunction << " " << (int)lossFunction << "\n\n";
+
+	for (unsigned u : topology) {
+		outfile << u << " ";
+	}
+	outfile << "\n";
+	for (unsigned i = 0; i < synapses.size(); i++) {
+		outfile << synapses[i].toString() << "\n";
+	}
+	outfile.close();
+}
+
+void NeuralNetwork::setWeights(const unsigned& startLayer, const std::vector<std::vector<double>>& weights) {
+	synapses[startLayer].setWeights(weights);
+}
+
+void NeuralNetwork::setWeights(const std::vector<std::vector<std::vector<double>>>& weights) {
+	assert(weights.size() == synapses.size());
+	for (unsigned i = 0; i < synapses.size(); i++) {
+		synapses[i].setWeights(weights[i]);
+	}
 }
