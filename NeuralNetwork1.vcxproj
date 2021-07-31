@@ -143,19 +143,21 @@
     <ClCompile Include="DataReader.cpp" />
     <ClCompile Include="DataTuple.cpp" />
     <ClCompile Include="driver.cpp" />
-    <ClCompile Include="Activation.h" />
+    <ClInclude Include="Activation.h" />
     <ClCompile Include="Loss.cpp" />
-    <ClCompile Include="Loss.h" />
+    <ClInclude Include="Loss.h" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="Synapse.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataReader.h" />
     <ClInclude Include="DataTuple.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="Synapse.h" />
-    <ClInclude Include="VectorFunctions.h" />
-    <ClInclude Include="VectorMath.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dataset.data" />

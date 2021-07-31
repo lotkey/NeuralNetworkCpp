@@ -10,8 +10,7 @@
 #include "Loss.h"
 #include "NeuralNetwork.h"
 #include "Synapse.h"
-#include "VectorFunctions.h"
-#include "VectorMath.h"
+#include "Vector.h"
 
 // Create a network from a topology of the layers
 NeuralNetwork::NeuralNetwork(const std::vector<unsigned>& topology) {
@@ -158,14 +157,14 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& features, cons
 			// Gather prediction from features
 			std::vector<double> prediction = predict(features[i]);
 			// Add prediction to the average (currently just a sum, will divide later)
-			VectorMath::operator+=(predictionAverage, prediction);
+			Vector::Math::operator+=(predictionAverage, prediction);
 			// Add answer to the average (currently just a sum, will divide later)
-			VectorMath::operator+=(answerAverage, labels[i]);
+			Vector::Math::operator+=(answerAverage, labels[i]);
 			// If the end of the batch has been reached...
 			if (batchCounter++ % batchSize == 0) {
 				// Divide the sums into averages
-				VectorMath::operator/=(predictionAverage, (double)batchSize);
-				VectorMath::operator/=(answerAverage, (double)batchSize);
+				Vector::Math::operator/=(predictionAverage, (double)batchSize);
+				Vector::Math::operator/=(answerAverage, (double)batchSize);
 				// Propagate loss backwards
 				backPropagate(predictionAverage, answerAverage);
 				correctWeights(learningRate);
@@ -270,7 +269,7 @@ void NeuralNetwork::save(const std::string& filename) const {
 	}
 	outfile << "\n";
 	for (unsigned i = 0; i < synapses.size(); i++) {
-		outfile << synapses[i].toString() << "\n";
+		outfile << synapses[i].to_string() << "\n";
 	}
 	outfile.close();
 }

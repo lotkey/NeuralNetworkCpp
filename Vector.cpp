@@ -1,66 +1,53 @@
-#ifndef VECTORMATH_H
-#define VECTORMATH_H
+#ifndef VECTOR_CPP
+#define VECTOR_CPP
 
-#include <cassert>
-#include <vector>
+#include "Vector.h"
 
-namespace VectorMath {
-
-#pragma region Add/Subtract
-	// Add a scalar to each element of a vector and return the solution
-	template <typename T>
-	std::vector<T> operator+(const std::vector<T>&, const T&);
-	// Add two vectors together, element-by-element, and return the solution
-	template <typename T>
-	std::vector<T> operator+(const std::vector<T>&, const std::vector<T>&);
-	// Add a scalar to each element of a vector and set the vector to the solution
-	template <typename T>
-	void operator+=(std::vector<T>&, const T&);
-	// Add two vectors together, element-by-element, and set the vector to the solution
-	template <typename T>
-	void operator+=(std::vector<T>&, const std::vector<T>&);
-
-	// Subtract a scalar from each element of a vector and return the solution
-	template <typename T>
-	std::vector<T> operator-(const std::vector<T>&, const T&);
-	// Subtract two vectors, element-by-element, and return the solution
-	template <typename T>
-	std::vector<T> operator-(const std::vector<T>&, const std::vector<T>&);
-	// Subtract a scalar from each element of a vector and set the vector to the solution
-	template <typename T>
-	void operator-=(std::vector<T>&, const T&);
-	// Subtract two vectors, element-by-element, and set the vector to the solution
-	template <typename T>
-	void operator-=(std::vector<T>&, const std::vector<T>&);
-#pragma endregion
-
-#pragma region Multiply/Divide
-	// Multiply each element of a vector by a scalar and return the solution
-	template <typename T>
-	std::vector<T> operator*(const std::vector<T>&, const T&);
-	template <typename T>
-	std::vector<T> operator*(const std::vector<T>&, const std::vector<std::vector<T>>&);
-	// Multiply each element of a vector by a scalar and set the vector to the solution
-	template <typename T>
-	void operator*=(std::vector<T>&, const T&);	
-	template <typename T>
-	void operator*=(std::vector<T>&, const std::vector<std::vector<T>>&);
-
-	// Divide each element of a vector by a scalar and return the solution
-	template <typename T>
-	std::vector<T> operator/(const std::vector<T>&, const T&);
-	// Divide each element of a vector by a scalar and set the vector to the solution
-	template <typename T>
-	void operator/=(std::vector<T>&, const T&);
-#pragma endregion
-
+// Returns the index of an element in a vector, or -1 if not found
+template <typename T>
+int Vector::indexOf(const std::vector<T>& v, const T& t) {
+	// Element-by-element comparison
+	for (unsigned i = 0; i < v.size(); i++) {
+		if (v[i] == t) return i;
+	}
+	return -1;
 }
+
+// Returns true if the vector contains the element, false otherwise
+template <typename T>
+bool Vector::contains(const std::vector<T>& v, const T& t) {
+	// Element-by-element comparison
+	for (T var : v) {
+		if (var == t) return true;
+	}
+	return false;
+}
+
+template <typename T>
+std::vector<std::vector<T>> Vector::matrixify(const std::vector<T>& v) {
+	std::vector<std::vector<T>> result;
+	for (T t : v) {
+		result.push_back(std::vector<T>());
+		result.back().push_back(t);
+	}
+	return result;
+}
+
+template <typename T>
+void Vector::print(const std::vector<T>& v) {
+	for (T t : v) {
+		std::cout << t << " ";
+	}
+	std::cout << "\n";
+}
+
+#pragma region Math
 
 #pragma region Add/Subtract
 
 // Add a scalar to each element of a vector and return the solution
 template <typename T>
-std::vector<T> VectorMath::operator+(const std::vector<T>& a, const T& b) {
+std::vector<T> Vector::Math::operator+(const std::vector<T>& a, const T& b) {
 	std::vector<T> c;
 	for (unsigned i = 0; i < a.size(); i++) {
 		c.push_back(a[i] + b);
@@ -70,7 +57,7 @@ std::vector<T> VectorMath::operator+(const std::vector<T>& a, const T& b) {
 
 // Add two vectors together, element-by-element, and return the solution
 template <typename T>
-std::vector<T> VectorMath::operator+(const std::vector<T>& a, const std::vector<T>& b) {
+std::vector<T> Vector::Math::operator+(const std::vector<T>& a, const std::vector<T>& b) {
 	assert(a.size() == b.size());
 	std::vector<T> c;
 	for (unsigned i = 0; i < a.size(); i++) {
@@ -82,7 +69,7 @@ std::vector<T> VectorMath::operator+(const std::vector<T>& a, const std::vector<
 
 // Add a scalar to each element of a vector and set the vector to the solution
 template <typename T>
-void VectorMath::operator+=(std::vector<T>& a, const T& b) {
+void Vector::Math::operator+=(std::vector<T>& a, const T& b) {
 	for (unsigned i = 0; i < a.size(); i++) {
 		a[i] += b;
 	}
@@ -90,7 +77,7 @@ void VectorMath::operator+=(std::vector<T>& a, const T& b) {
 
 // Add two vectors together, element-by-element, and set the vector to the solution
 template <typename T>
-void VectorMath::operator+=(std::vector<T>& a, const std::vector<T>& b) {
+void Vector::Math::operator+=(std::vector<T>& a, const std::vector<T>& b) {
 	assert(a.size() == b.size());
 	for (unsigned i = 0; i < a.size(); i++) {
 		a[i] += b[i];
@@ -99,7 +86,7 @@ void VectorMath::operator+=(std::vector<T>& a, const std::vector<T>& b) {
 
 // Subtract a scalar from each element of a vector and return the solution
 template <typename T>
-std::vector<T> VectorMath::operator-(const std::vector<T>& a, const T& b) {
+std::vector<T> Vector::Math::operator-(const std::vector<T>& a, const T& b) {
 	std::vector<T> c;
 	for (unsigned i = 0; i < a.size(); i++) {
 		c.push_back(a[i] - b);
@@ -109,7 +96,7 @@ std::vector<T> VectorMath::operator-(const std::vector<T>& a, const T& b) {
 
 // Subtract two vectors, element-by-element, and return the solution
 template <typename T>
-std::vector<T> VectorMath::operator-(const std::vector<T>& a, const std::vector<T>& b) {
+std::vector<T> Vector::Math::operator-(const std::vector<T>& a, const std::vector<T>& b) {
 	assert(a.size() == b.size());
 	std::vector<T> c;
 	for (unsigned i = 0; i < a.size(); i++) {
@@ -121,7 +108,7 @@ std::vector<T> VectorMath::operator-(const std::vector<T>& a, const std::vector<
 
 // Subtract a scalar from each element of a vector and set the vector to the solution
 template <typename T>
-void VectorMath::operator-=(std::vector<T>& a, const T& b) {
+void Vector::Math::operator-=(std::vector<T>& a, const T& b) {
 	for (unsigned i = 0; i < a.size(); i++) {
 		a[i] -= b;
 	}
@@ -129,7 +116,7 @@ void VectorMath::operator-=(std::vector<T>& a, const T& b) {
 
 // Subtract two vectors, element-by-element, and set the vector to the solution
 template <typename T>
-void VectorMath::operator-=(std::vector<T>& a, const std::vector<T>& b) {
+void Vector::Math::operator-=(std::vector<T>& a, const std::vector<T>& b) {
 	assert(a.size() == b.size());
 	for (unsigned i = 0; i < a.size(); i++) {
 		a[i] -= b[i];
@@ -142,7 +129,7 @@ void VectorMath::operator-=(std::vector<T>& a, const std::vector<T>& b) {
 
 // Multiply each element of a vector by a scalar and return the solution
 template <typename T>
-std::vector<T> VectorMath::operator*(const std::vector<T>& a, const T& b) {
+std::vector<T> Vector::Math::operator*(const std::vector<T>& a, const T& b) {
 	std::vector<T> c;
 	for (unsigned i = 0; i < a.size(); i++) {
 		c.push_back(a[i] * b);
@@ -151,7 +138,7 @@ std::vector<T> VectorMath::operator*(const std::vector<T>& a, const T& b) {
 }
 
 template <typename T>
-std::vector<T> VectorMath::operator*(const std::vector<T>& v, const std::vector<std::vector<T>>& m) {
+std::vector<T> Vector::Math::operator*(const std::vector<T>& v, const std::vector<std::vector<T>>& m) {
 	std::cout << m.size() << ", " << m[0].size() << ": " << v.size() << std::endl;
 	assert(m.size() == v.size() || m[0].size() == v.size());
 	std::vector<T> product;
@@ -177,14 +164,14 @@ std::vector<T> VectorMath::operator*(const std::vector<T>& v, const std::vector<
 
 // Multiply each element of a vector by a scalar and set the vector to the solution
 template <typename T>
-void VectorMath::operator*=(std::vector<T>& a, const T& b) {
+void Vector::Math::operator*=(std::vector<T>& a, const T& b) {
 	for (unsigned i = 0; i < a.size(); i++) {
 		a[i] *= b;
 	}
 }
 
 template <typename T>
-void VectorMath::operator*=(std::vector<T>& v, const std::vector<std::vector<T>>& m) {
+void Vector::Math::operator*=(std::vector<T>& v, const std::vector<std::vector<T>>& m) {
 	assert(m.size() == v.size() || m[0].size(0) == v.size());
 	std::vector<T> product;
 	if (m.size() == v.size()) {
@@ -209,7 +196,7 @@ void VectorMath::operator*=(std::vector<T>& v, const std::vector<std::vector<T>>
 
 // Divide each element of a vector by a scalar and return the solution
 template <typename T>
-std::vector<T> VectorMath::operator/(const std::vector<T>& a, const T& b) {
+std::vector<T> Vector::Math::operator/(const std::vector<T>& a, const T& b) {
 	std::vector<T> c;
 	for (unsigned i = 0; i < a.size(); i++) {
 		c.push_back(a[i] / b);
@@ -219,11 +206,14 @@ std::vector<T> VectorMath::operator/(const std::vector<T>& a, const T& b) {
 
 // Divide each element of a vector by a scalar and set the vector to the solution
 template <typename T>
-void VectorMath::operator/=(std::vector<T>& a, const T& b) {
+void Vector::Math::operator/=(std::vector<T>& a, const T& b) {
 	for (unsigned i = 0; i < a.size(); i++) {
 		a[i] /= b;
 	}
 }
+
+#pragma endregion
+
 
 #pragma endregion
 

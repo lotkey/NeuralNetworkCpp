@@ -3,11 +3,12 @@
 
 #include <iostream>
 #include <vector>
+#include "Matrix.h"
 
 class Synapse {
 private:
 	// Matrix of weights from the starting layer to the ending layer
-	std::vector<std::vector<double>> weights;
+	Matrix weights;
 	// Store the last input for correcting weights
 	std::vector<double> lastInput;
 	// Store the last output for correcting weights
@@ -37,7 +38,7 @@ public:
 	std::vector<double> propagateError(const std::vector<double>&, const Activation::Function&);
 	void correctWeights(const double&);
 	void setWeights(const std::vector<std::vector<double>>&);
-	std::string toString() const;
+	std::string to_string() const;
 };
 
 #endif

@@ -5,7 +5,7 @@
 #include <string>
 #include <tuple>
 #include "DataReader.h"
-#include "VectorFunctions.h"
+#include "Vector.h"
 
 
 /* Static method
@@ -89,11 +89,11 @@ void DataReader::read(const std::string& filename, const std::string& separator,
 	while (std::getline(infile, line)) {
 
 		std::string label = line.substr(0, line.find(separator));
-		if (!numericalLabels && !VectorFunctions::contains(labelStrings, label)) {
+		if (!numericalLabels && !Vector::contains(labelStrings, label)) {
 			labelStrings.push_back(label);
 		}
 		if (numericalLabels) labels.push_back(std::atof(label.c_str()));
-		else labels.push_back(VectorFunctions::indexOf(labelStrings, label));
+		else labels.push_back(Vector::indexOf(labelStrings, label));
 		line = line.substr(line.find(separator) + 1, line.length() - line.find(separator));
 
 		features.push_back(std::vector<double>());
@@ -105,7 +105,7 @@ void DataReader::read(const std::string& filename, const std::string& separator,
 				line = "";
 			}
 			else feature = line.substr(0, line.find(separator));
-			if (!numericalFeatures && !VectorFunctions::contains(featureStrings, feature)) {
+			if (!numericalFeatures && !Vector::contains(featureStrings, feature)) {
 				featureStrings.push_back(feature);
 			}
 			if (numericalFeatures) {
@@ -113,8 +113,8 @@ void DataReader::read(const std::string& filename, const std::string& separator,
 				featureOutput.back().push_back(std::atof(feature.c_str()));
 			}
 			else {
-				features.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
-				featureOutput.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
+				features.back().push_back(Vector::indexOf(featureStrings, feature));
+				featureOutput.back().push_back(Vector::indexOf(featureStrings, feature));
 			}
 			line = line.substr(line.find(separator) + 1, line.length() - line.find(separator));
 		}
@@ -137,18 +137,18 @@ void DataReader::readLabelInBack(const std::string& filename, const std::string&
 		int lastIndex = line.find_last_of(separator);
 		//std::string label = line.substr(0, line.find(separator));
 		std::string label = line.substr(lastIndex + 1, line.length() - (lastIndex + 1));
-		if (!numericalLabels && !VectorFunctions::contains(labelStrings, label)) {
+		if (!numericalLabels && !Vector::contains(labelStrings, label)) {
 			labelStrings.push_back(label);
 		}
 		if (numericalLabels) labels.push_back(std::atof(label.c_str()));
-		else labels.push_back(VectorFunctions::indexOf(labelStrings, label));
+		else labels.push_back(Vector::indexOf(labelStrings, label));
 		line = line.substr(0, lastIndex);
 
 		features.push_back(std::vector<double>());
 		featureOutput.push_back(std::vector<double>());
 		while (line != "") {
 			std::string feature = line.substr(0, line.find(separator));
-			if (!numericalFeatures && !VectorFunctions::contains(featureStrings, feature)) {
+			if (!numericalFeatures && !Vector::contains(featureStrings, feature)) {
 				featureStrings.push_back(feature);
 			}
 			if (numericalFeatures) {
@@ -156,8 +156,8 @@ void DataReader::readLabelInBack(const std::string& filename, const std::string&
 				featureOutput.back().push_back(std::atof(feature.c_str()));
 			}
 			else {
-				features.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
-				featureOutput.back().push_back(VectorFunctions::indexOf(featureStrings, feature));
+				features.back().push_back(Vector::indexOf(featureStrings, feature));
+				featureOutput.back().push_back(Vector::indexOf(featureStrings, feature));
 			}
 			line = line.substr(line.find(separator) + 1, line.length() - line.find(separator));
 			if (line == " " || line == separator) line = "";
@@ -208,7 +208,7 @@ DataTuple DataReader::spliceFront(const double& portion, const bool& oneHotFeatu
 	if (oneHotFeatures) data.setFeatures(oneHot(featureSplice, featureStrings));
 	else data.setFeatures(featureSplice);
 	if (oneHotLabels) data.setLabels(oneHot(labelSplice, labelStrings));
-	else data.setLabels(VectorFunctions::matrixify(labelSplice));
+	else data.setLabels(Vector::matrixify(labelSplice));
 	std::cout << "Finished splicing.\n";
 	return data;
 }
@@ -225,7 +225,7 @@ DataTuple DataReader::spliceBack(const double& portion, const bool& oneHotFeatur
 	if (oneHotFeatures) data.setFeatures(oneHot(featureSplice, featureStrings));
 	else data.setFeatures(featureSplice);
 	if (oneHotLabels) data.setLabels(oneHot(labelSplice, labelStrings));
-	else data.setLabels(VectorFunctions::matrixify(labelSplice));
+	else data.setLabels(Vector::matrixify(labelSplice));
 	std::cout << "Finished splicing.\n";
 	return data;
 }

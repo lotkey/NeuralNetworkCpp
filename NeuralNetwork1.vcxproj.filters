@@ -24,12 +24,6 @@
     <ClCompile Include="Synapse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Activation.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Loss.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Activation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,6 +34,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DataTuple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,13 +53,19 @@
     <ClInclude Include="DataReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VectorMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VectorFunctions.h">
+    <ClInclude Include="Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataTuple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Activation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Loss.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
